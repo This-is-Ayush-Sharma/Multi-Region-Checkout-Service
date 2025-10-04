@@ -1,0 +1,85 @@
+@startuml
+
+enum PaymentGatewayType {
+    RAZORPAY
+    PAYU
+    RAKUTEN
+    LINEPAY
+}
+
+interface PaymentGateway {
+    +processPayment(amount: double): boolean
+}
+
+interface Invoice {
+    +generateInvoice(): boolean
+}
+
+interface RegionFactory {
+    +createPaymentGateway(gatewayType: PaymentGatewayType): PaymentGateway
+    +generateInvoice(): Invoice
+}
+
+interface CheckOutService {
+    +completeOrder(amount: double): boolean
+}
+
+' payment gateway
+class RazorpayGateway
+class PayUGateway
+
+class RakutenPayGateway
+class LinePayGateway
+
+' Invoice
+class IndianInvoice
+class JapaneseInvoice
+
+' CheckoutService Impl
+class CheckOutServiceImpl {
+    +<<create>> checkOutServiceImpl(regionFactory: RegionFactory, paymentGatewayType: PaymentGatewayType)
+}
+
+class IndianFactory
+class JapaneseFactory
+
+' Payment impl
+RazorpayGateway ..|> PaymentGateway
+PayUGateway ..|> PaymentGateway
+RakutenPayGateway ..|> PaymentGateway
+LinePayGateway ..|> PaymentGateway
+
+' Invoice Impl
+IndianInvoice ..|> Invoice
+JapaneseInvoice ..|> Invoice
+
+' CheckoutService Impl
+CheckOutServiceImpl ..|> CheckOutService
+
+' Region
+IndianFactory ..|> RegionFactory
+JapaneseFactory ..|> RegionFactory
+
+
+
+' dependency
+CheckOutService ..> RegionFactory
+CheckOutService ..> Invoice
+CheckOutService ..> PaymentGateway
+PaymentGateway ..> PaymentGatewayType
+
+' Association
+CheckoutService ..> PaymentGateway
+CheckoutService ..> Invoice
+CheckoutService ..> RegionFactory
+
+IndianFactory --> RazorpayGateway : creates
+IndianFactory --> PayUGateway : creates
+IndianFactory --> IndianInvoice : creates
+
+JapaneseFactory --> RakutenPayGateway : creates
+JapaneseFactory --> LinePayGateway : creates
+JapaneseFactory --> JapaneseInvoice : creates
+
+
+@enduml
