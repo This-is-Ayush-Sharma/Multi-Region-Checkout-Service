@@ -1,6 +1,6 @@
 package org.checkoutService.constants;
 
-public enum PaymentMethods {
+public enum PaymentGatewayTypes {
     RAZORPAY,
     PAYU,
     RAKUTENPAY,
